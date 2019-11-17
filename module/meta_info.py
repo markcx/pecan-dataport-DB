@@ -411,12 +411,15 @@ def download_dataport(database_host,
 
     # Create a temporary metadata dir, remove existing building
     # yaml files in module dir (if any)
+    # original_metadata_dir = os.path.join(m_util.get_module_directory(),
+    #                                      'dataset_converters',
+    #                                      'dataport',
+    #                                      'metadata')
+
     original_metadata_dir = os.path.join(m_util.get_module_directory(),
-                                         'dataset_converters',
-                                         'dataport',
-                                         'metadata')
+                                         'metadata_tmp')
     tmp_dir = tempfile.mkdtemp()
-    metadata_dir = os.path.join(tmp_dir, 'metadata')
+    metadata_dir = os.path.join(tmp_dir, 'metadata_tmp')
     shutil.copytree(original_metadata_dir, metadata_dir)
     print("Using temporary dir for metadata:", metadata_dir)
 
@@ -602,7 +605,7 @@ def _dataport_dataframe_to_hdf(dataport_dataframe,
     local_dataframe = local_dataframe.set_index(timestamp_name)
 
     # set timezone
-    local_dataframe = local_dataframe.tz_localize('US/Central')
+    local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous=True)
     # remove timestamp column from dataframe
     feeds_dataframe = local_dataframe.drop('dataid', axis=1)
     # Column names for dataframe

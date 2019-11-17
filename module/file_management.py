@@ -44,7 +44,12 @@ def _find_all_files_with_suffix(suffix, directory):
 
 def _path_to_directory(*args):
     path_to_directory = join(_get_module_directory(), *args)
-    assert isdir(path_to_directory)
+    # print(path_to_directory)
+    # assert isdir(path_to_directory)
+    if not os.path.exists(path_to_directory):
+        os.mkdir(path_to_directory)
+
+    # assert isdir(path_to_directory)
     return path_to_directory
 
 

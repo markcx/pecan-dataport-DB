@@ -14,9 +14,11 @@ def get_appliance_types():
     dict of all appliance types.  Fully concatenated and with components
     recursively resolved.
     """
+
     appliance_types_from_disk = get_appliance_types_from_disk()
     appliance_types = _concatenate_all_appliance_types(
-        appliance_types_from_disk)
+                            appliance_types_from_disk)
+
     return appliance_types
 
 

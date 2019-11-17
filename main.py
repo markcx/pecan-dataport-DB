@@ -22,6 +22,13 @@ def config(filename='pecan_database.ini', section='postgresql'):
 
 config_dict = config()
 # metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity')
-buildingIDs = metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity.eg_angle_15min', 'eg_angle_15min')
-metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
-
+# buildingIDs = metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity.eg_angle_15min', 'eg_angle_15min')
+# metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
+table_name = 'eg_realpower_1hr'
+metaInfo.download_dataport(config_dict['host'],
+                           config_dict['user'],
+                           config_dict['password'],
+                           'data/%s_%s.h5' % (26, table_name),
+                           'electricity',
+                           table_name,
+                           periods_to_load={ 26: ('2018-11-17', '2019-01-17')})

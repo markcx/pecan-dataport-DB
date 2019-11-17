@@ -103,6 +103,24 @@ when call metaInfo view window it queries the other_datasets.metadata
 Done loading all the buildings!!
 ```
 
+When run the main file with demo setting, here is the example outcome:
+```python
+Loading building 26 @ 2019-11-17 13:53:07.803936
+  Loading table eg_realpower_1hr
+    2018-11-17 11:40:00+00:00 -> 2018-11-27 11:39:59+00:00: 240 rows
+    2018-11-27 11:40:00+00:00 -> 2018-12-07 11:39:59+00:00: 240 rows
+    2018-12-07 11:40:00+00:00 -> 2018-12-17 11:39:59+00:00: 240 rows
+    2018-12-17 11:40:00+00:00 -> 2018-12-27 11:39:59+00:00: 240 rows
+    2018-12-27 11:40:00+00:00 -> 2019-01-06 11:39:59+00:00: 240 rows
+    2019-01-06 11:40:00+00:00 -> 2019-01-16 11:39:59+00:00: 240 rows
+    2019-01-16 11:40:00+00:00 -> 2019-01-16 23:59:59-06:00: 12 rows
+Done converting YAML metadata to HDF5!
+``` 
+
+
+
+
+
 -----
 
 
