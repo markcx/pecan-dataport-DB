@@ -4,6 +4,10 @@ Reference:
 https://github.com/nilmtk/nilmtk
 """
 
+import pandas as pd
+import psycopg2 as db
+
+
 """
 MANUAL:
 
@@ -84,11 +88,7 @@ TODO:
 
 """
 
-import psycopg2 as db
-import pandas as pd
-
-################### table columns ####################
-
+# table columns #
 feed_mapping = {
                 'air1': {'type': 'air conditioner'},
                 'air2': {'type': 'air conditioner'},
@@ -102,9 +102,9 @@ feed_mapping = {
                 'bedroom3': {'type': 'sockets', 'room': 'bedroom'},
                 'bedroom4': {'type': 'sockets', 'room': 'bedroom'},
                 'bedroom5': {'type': 'sockets', 'room': 'bedroom'},
-                'battery1': {},                       #new field, need mapping
+                'battery1': {},                       # new field, need mapping
                 'car1': {'type': 'electric vehicle'},
-                'circpump1': {},                      #new field, need mapping
+                'circpump1': {},                      # new field, need mapping
                 'clotheswasher1': {'type': 'washing machine'},
                 'clotheswasher_dryg1': {'type': 'washer dryer'},
                 'diningroom1': {'type': 'sockets', 'room': 'dining room'},
@@ -152,17 +152,17 @@ feed_mapping = {
                 'refrigerator1': {'type': 'fridge'},
                 'refrigerator2': {'type': 'fridge'},
                 'security1': {'type': 'security alarm'},
-                'sewerpump1': {},               #new field, need mapping
+                'sewerpump1': {},               # new field, need mapping
                 'shed1': {'type': 'sockets', 'room': 'shed'},
                 'solar': {},
                 'solar2': {},
                 'sprinkler1': {'type': 'appliance'},
-                'sumppump1': {},                #new field, need mapping
+                'sumppump1': {},                # new field, need mapping
                 'utilityroom1': {'type': 'sockets', 'room': 'utility room'},
                 'venthood1': {'type': 'appliance'},
                 'waterheater1': {'type': 'electric water heating appliance'},
                 'waterheater2': {'type': 'electric water heating appliance'},
-                'wellpump1': {},                #new field, need mapping
+                'wellpump1': {},                # new field, need mapping
                 'winecooler1': {'type': 'appliance'},
                 'leg1v':{},
                 'leg2v':{}
@@ -198,11 +198,8 @@ def database_assert(database_table):
             ), "Table not compatible with desired electricity shemas!"
 
 
-def view_database_tables(
-        database_username,
-        database_password,
-        database_schema
-):
+def view_database_tables(database_username, database_password, database_schema):
+
     database_host = 'dataport.pecanstreet.org'
     database_port = '5434'
     database_name = 'dataport'
@@ -227,10 +224,4 @@ def view_database_tables(
     df = pd.DataFrame({database_schema: database_tables})
     print(df)
     conn.close()
-
-
-
-
-
-
-
+    return df

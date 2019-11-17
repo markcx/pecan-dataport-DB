@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-
+import module.meta_info as metaInfo
 
 def config(filename='pecan_database.ini', section='postgresql'):
     # create a parser
@@ -21,3 +21,6 @@ def config(filename='pecan_database.ini', section='postgresql'):
 
 
 # print(config())
+# config_dict = config()
+# print(metaInfo.view_database_tables(config_dict['user'], config_dict['password'], 'electricity'))
+# config()
