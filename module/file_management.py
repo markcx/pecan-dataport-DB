@@ -1,11 +1,12 @@
 from __future__ import print_function, division
-from inspect import currentframe, getfile, getsourcefile
-from os.path import dirname, join, isdir, abspath
-import os
-from os import getcwd
-from sys import getfilesystemencoding
-import yaml
 
+import os
+from inspect import currentframe, getfile, getsourcefile
+from os import getcwd
+from os.path import dirname, join, isdir, abspath
+from sys import getfilesystemencoding
+
+import yaml
 
 
 def get_appliance_types_from_disk():

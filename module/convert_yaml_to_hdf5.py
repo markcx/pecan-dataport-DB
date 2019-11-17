@@ -1,11 +1,14 @@
 from __future__ import print_function, division
-import yaml
-import pandas as pd
-from os.path import isdir, isfile, join, splitext
-from os import listdir
-from sys import stderr
+
 from copy import deepcopy
+from os import listdir
+from os.path import isdir, isfile, join, splitext
+from sys import stderr
+
+import pandas as pd
+import yaml
 from six import iteritems
+
 from .object_concatenation import get_appliance_types
 
 
@@ -93,7 +96,7 @@ def save_yaml_to_datastore(yaml_dir, store):
         _set_data_location(elec_meters, building)
         _sanity_check_meters(elec_meters, meter_devices)
         _sanity_check_appliances(building_metadata)
-        store.save_metadata('/'+building, building_metadata)
+        store.save_metadata('/' + building, building_metadata)
 
     store.close()
     print("Done converting YAML metadata to HDF5!")
@@ -155,7 +158,7 @@ def _sanity_check_appliances(building_metadata):
         if not isinstance(appliance, dict):
             raise NilmMetadataError(
                 "Appliance '{}' is {} when it should be a dict."
-                .format(appliance, type(appliance)))
+                    .format(appliance, type(appliance)))
 
         # Generate string for specifying which is the problematic
         # appliance for error messages:
@@ -176,7 +179,7 @@ def _sanity_check_appliances(building_metadata):
         if appl_type not in appliance_types:
             raise NilmMetadataError(
                 appl_string + " not in appliance_types."
-                "  In other words, '{}' is not a recognised appliance type."
+                              "  In other words, '{}' is not a recognised appliance type."
                 .format(appl_type))
 
         # Check appliance references valid meters
@@ -201,7 +204,7 @@ def _sanity_check_appliances(building_metadata):
 
     for appliance_type, instances in iteritems(appliance_instances):
         instances.sort()
-        correct_instances = list(range(1, len(instances)+1))
+        correct_instances = list(range(1, len(instances) + 1))
         if instances != correct_instances:
             msg = ("In building {:d}, appliance '{}' appears {:d} time(s)."
                    " Yet the list of instances is '{}'.  The list of instances"

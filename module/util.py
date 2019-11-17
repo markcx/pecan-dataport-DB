@@ -1,6 +1,7 @@
-import os
 import inspect
+import os
 import sys
+
 
 def get_module_directory():
     # Taken from http://stackoverflow.com/a/6098238/732596

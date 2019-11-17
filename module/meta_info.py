@@ -4,21 +4,21 @@ Reference:
 https://github.com/nilmtk/nilmtk
 """
 
+import datetime
+import os
+import re
+import shutil
+import sys
+import tempfile
+
+import numpy as np
 import pandas as pd
 import psycopg2 as db
-import datetime
-import sys
-import os
-import shutil
-import tempfile
-import re
 import yaml
-import numpy as np
 
-import module.util as m_util
-import module.convert_yaml_to_hdf5 as m_c_yaml2hdf5
 import datastore.key as dskey
-
+import module.convert_yaml_to_hdf5 as m_c_yaml2hdf5
+import module.util as m_util
 
 """
 MANUAL:
@@ -102,88 +102,89 @@ TODO:
 
 # table columns #
 feed_mapping = {
-                'air1': {'type': 'air conditioner'},
-                'air2': {'type': 'air conditioner'},
-                'air3': {'type': 'air conditioner'},
-                'airwindowunit1': {'type': 'air conditioner'},
-                'aquarium1': {'type': 'appliance'},
-                'bathroom1': {'type': 'sockets', 'room': 'bathroom'},
-                'bathroom2': {'type': 'sockets', 'room': 'bathroom'},
-                'bedroom1': {'type': 'sockets', 'room': 'bedroom'},
-                'bedroom2': {'type': 'sockets', 'room': 'bedroom'},
-                'bedroom3': {'type': 'sockets', 'room': 'bedroom'},
-                'bedroom4': {'type': 'sockets', 'room': 'bedroom'},
-                'bedroom5': {'type': 'sockets', 'room': 'bedroom'},
-                'battery1': {},                       # new field, need mapping
-                'car1': {'type': 'electric vehicle'},
-                'circpump1': {},                      # new field, need mapping
-                'clotheswasher1': {'type': 'washing machine'},
-                'clotheswasher_dryg1': {'type': 'washer dryer'},
-                'diningroom1': {'type': 'sockets', 'room': 'dining room'},
-                'diningroom2': {'type': 'sockets', 'room': 'dining room'},
-                'dishwasher1': {'type': 'dish washer'},
-                'disposal1': {'type': 'waste disposal unit'},
-                'drye1': {'type': 'spin dryer'},
-                'dryg1': {'type': 'spin dryer'},
-                'freezer1': {'type': 'freezer'},
-                'furnace1': {'type': 'electric furnace'},
-                'furnace2': {'type': 'electric furnace'},
-                'garage1': {'type': 'sockets', 'room': 'dining room'},
-                'garage2': {'type': 'sockets', 'room': 'dining room'},
-                'grid': {},
-                'heater1': {'type': 'electric space heater'},
-                'heater2': {'type': 'electric space heater'},
-                'heater3': {'type': 'electric space heater'},
-                'housefan1': {'type': 'electric space heater'},
-                'icemaker1': {'type': 'appliance'},
-                'jacuzzi1': {'type': 'electric hot tub heater'},
-                'kitchen1': {'type': 'sockets', 'room': 'kitchen'},
-                'kitchen2': {'type': 'sockets', 'room': 'kitchen'},
-                'kitchenapp1': {'type': 'sockets', 'room': 'kitchen'},
-                'kitchenapp2': {'type': 'sockets', 'room': 'kitchen'},
-                'lights_plugs1': {'type': 'light'},
-                'lights_plugs2': {'type': 'light'},
-                'lights_plugs3': {'type': 'light'},
-                'lights_plugs4': {'type': 'light'},
-                'lights_plugs5': {'type': 'light'},
-                'lights_plugs6': {'type': 'light'},
-                'livingroom1': {'type': 'sockets', 'room': 'living room'},
-                'livingroom2': {'type': 'sockets', 'room': 'living room'},
-                'microwave1': {'type': 'microwave'},
-                'office1': {'type': 'sockets', 'room': 'office'},
-                'outsidelights_plugs1': {'type': 'sockets', 'room': 'outside'},
-                'outsidelights_plugs2': {'type': 'sockets', 'room': 'outside'},
-                'oven1': {'type': 'oven'},
-                'oven2': {'type': 'oven'},
-                'pool1': {'type': 'electric swimming pool heater'},
-                'pool2': {'type': 'electric swimming pool heater'},
-                'poollight1': {'type': 'light'},
-                'poolpump1': {'type': 'electric swimming pool heater'},
-                'pump1': {'type': 'appliance'},
-                'range1': {'type': 'stove'},
-                'refrigerator1': {'type': 'fridge'},
-                'refrigerator2': {'type': 'fridge'},
-                'security1': {'type': 'security alarm'},
-                'sewerpump1': {},               # new field, need mapping
-                'shed1': {'type': 'sockets', 'room': 'shed'},
-                'solar': {},
-                'solar2': {},
-                'sprinkler1': {'type': 'appliance'},
-                'sumppump1': {},                # new field, need mapping
-                'utilityroom1': {'type': 'sockets', 'room': 'utility room'},
-                'venthood1': {'type': 'appliance'},
-                'waterheater1': {'type': 'electric water heating appliance'},
-                'waterheater2': {'type': 'electric water heating appliance'},
-                'wellpump1': {},                # new field, need mapping
-                'winecooler1': {'type': 'appliance'},
-                'leg1v':{},
-                'leg2v':{}
-                }
+    'air1': {'type': 'air conditioner'},
+    'air2': {'type': 'air conditioner'},
+    'air3': {'type': 'air conditioner'},
+    'airwindowunit1': {'type': 'air conditioner'},
+    'aquarium1': {'type': 'appliance'},
+    'bathroom1': {'type': 'sockets', 'room': 'bathroom'},
+    'bathroom2': {'type': 'sockets', 'room': 'bathroom'},
+    'bedroom1': {'type': 'sockets', 'room': 'bedroom'},
+    'bedroom2': {'type': 'sockets', 'room': 'bedroom'},
+    'bedroom3': {'type': 'sockets', 'room': 'bedroom'},
+    'bedroom4': {'type': 'sockets', 'room': 'bedroom'},
+    'bedroom5': {'type': 'sockets', 'room': 'bedroom'},
+    'battery1': {},  # new field, need mapping
+    'car1': {'type': 'electric vehicle'},
+    'circpump1': {},  # new field, need mapping
+    'clotheswasher1': {'type': 'washing machine'},
+    'clotheswasher_dryg1': {'type': 'washer dryer'},
+    'diningroom1': {'type': 'sockets', 'room': 'dining room'},
+    'diningroom2': {'type': 'sockets', 'room': 'dining room'},
+    'dishwasher1': {'type': 'dish washer'},
+    'disposal1': {'type': 'waste disposal unit'},
+    'drye1': {'type': 'spin dryer'},
+    'dryg1': {'type': 'spin dryer'},
+    'freezer1': {'type': 'freezer'},
+    'furnace1': {'type': 'electric furnace'},
+    'furnace2': {'type': 'electric furnace'},
+    'garage1': {'type': 'sockets', 'room': 'dining room'},
+    'garage2': {'type': 'sockets', 'room': 'dining room'},
+    'grid': {},
+    'heater1': {'type': 'electric space heater'},
+    'heater2': {'type': 'electric space heater'},
+    'heater3': {'type': 'electric space heater'},
+    'housefan1': {'type': 'electric space heater'},
+    'icemaker1': {'type': 'appliance'},
+    'jacuzzi1': {'type': 'electric hot tub heater'},
+    'kitchen1': {'type': 'sockets', 'room': 'kitchen'},
+    'kitchen2': {'type': 'sockets', 'room': 'kitchen'},
+    'kitchenapp1': {'type': 'sockets', 'room': 'kitchen'},
+    'kitchenapp2': {'type': 'sockets', 'room': 'kitchen'},
+    'lights_plugs1': {'type': 'light'},
+    'lights_plugs2': {'type': 'light'},
+    'lights_plugs3': {'type': 'light'},
+    'lights_plugs4': {'type': 'light'},
+    'lights_plugs5': {'type': 'light'},
+    'lights_plugs6': {'type': 'light'},
+    'livingroom1': {'type': 'sockets', 'room': 'living room'},
+    'livingroom2': {'type': 'sockets', 'room': 'living room'},
+    'microwave1': {'type': 'microwave'},
+    'office1': {'type': 'sockets', 'room': 'office'},
+    'outsidelights_plugs1': {'type': 'sockets', 'room': 'outside'},
+    'outsidelights_plugs2': {'type': 'sockets', 'room': 'outside'},
+    'oven1': {'type': 'oven'},
+    'oven2': {'type': 'oven'},
+    'pool1': {'type': 'electric swimming pool heater'},
+    'pool2': {'type': 'electric swimming pool heater'},
+    'poollight1': {'type': 'light'},
+    'poolpump1': {'type': 'electric swimming pool heater'},
+    'pump1': {'type': 'appliance'},
+    'range1': {'type': 'stove'},
+    'refrigerator1': {'type': 'fridge'},
+    'refrigerator2': {'type': 'fridge'},
+    'security1': {'type': 'security alarm'},
+    'sewerpump1': {},  # new field, need mapping
+    'shed1': {'type': 'sockets', 'room': 'shed'},
+    'solar': {},
+    'solar2': {},
+    'sprinkler1': {'type': 'appliance'},
+    'sumppump1': {},  # new field, need mapping
+    'utilityroom1': {'type': 'sockets', 'room': 'utility room'},
+    'venthood1': {'type': 'appliance'},
+    'waterheater1': {'type': 'electric water heating appliance'},
+    'waterheater2': {'type': 'electric water heating appliance'},
+    'wellpump1': {},  # new field, need mapping
+    'winecooler1': {'type': 'appliance'},
+    'leg1v': {},
+    'leg2v': {}
+}
 
 feed_ignore = ['solar', 'solar2', 'grid', 'leg1v', 'leg2v', 'battery1', 'circpump1',
                'sewerpump1', 'sumppump1', 'wellpump1']
 
 LEVEL_NAMES = ['physical_quantity', 'type']
+
 
 def database_assert(database_table):
     assert (
@@ -208,12 +209,10 @@ def database_assert(database_table):
             database_table == 'eg_thd_1min' or
             database_table == 'eg_thd_1s' or
             database_table == 'eg_realpower_1s_40homes_dataset'
-            ), "Table not compatible with desired electricity shemas!"
+    ), "Table not compatible with desired electricity shemas!"
 
 
 def view_database_tables(database_host, database_username, database_password, database_schema):
-
-
     database_port = '5434'
     database_name = 'dataport'
 
@@ -241,7 +240,6 @@ def view_database_tables(database_host, database_username, database_password, da
 
 
 def view_buildings(database_host, database_username, database_password, database_schema, database_table):
-
     database_assert(database_table)
     database_port = '5434'
     database_name = 'dataport'
@@ -308,21 +306,21 @@ def view_data_window(database_host,
     #              ' FROM other_datasets.metadata' +
     #              ' ORDER BY dataid')
 
-    if(not (building_no)):
+    if (not (building_no)):
         print(" Please provide the list of building numbers ")
     else:
         for each_building in building_no:
-            #seperate columns for 1s and 1min data
-            if(database_table.find('_1s') > 0):
+            # seperate columns for 1s and 1min data
+            if (database_table.find('_1s') > 0):
                 # sql_query = ('SELECT MIN(egauge_1s_min_time) AS minlocalminute,' +
                 #          ' MAX(egauge_1s_max_time) AS maxlocalminute' +
                 #          ' FROM other_datasets.metadata' +
                 #          ' WHERE dataid=' + str(each_building))
 
                 sql_query = ('SELECT MIN(egauge_1s_min_time) AS minlocalminute,' +
-                         ' MAX(egauge_1s_max_time) AS maxlocalminute' +
-                         ' FROM ' + database_schema +
-                         ' WHERE dataid=' + str(each_building))
+                             ' MAX(egauge_1s_max_time) AS maxlocalminute' +
+                             ' FROM ' + database_schema +
+                             ' WHERE dataid=' + str(each_building))
             else:
                 # sql_query = ('SELECT MIN(egauge_1min_min_time) AS minlocalminute,' +
                 #          ' MAX(egauge_1min_max_time) AS maxlocalminute' +
@@ -414,9 +412,9 @@ def download_dataport(database_host,
     # Create a temporary metadata dir, remove existing building
     # yaml files in module dir (if any)
     original_metadata_dir = os.path.join(m_util.get_module_directory(),
-                                 'dataset_converters',
-                                 'dataport',
-                                 'metadata')
+                                         'dataset_converters',
+                                         'dataport',
+                                         'metadata')
     tmp_dir = tempfile.mkdtemp()
     metadata_dir = os.path.join(tmp_dir, 'metadata')
     shutil.copytree(original_metadata_dir, metadata_dir)
@@ -588,7 +586,6 @@ def download_dataport(database_host,
     shutil.rmtree(tmp_dir)
 
 
-
 def _dataport_dataframe_to_hdf(dataport_dataframe,
                                store,
                                nilmtk_building_id,
@@ -600,7 +597,7 @@ def _dataport_dataframe_to_hdf(dataport_dataframe,
 
     # remove timezone information to avoid append errors
     local_dataframe[timestamp_name] = pd.DatetimeIndex([i.replace(tzinfo=None)
-                                                       for i in local_dataframe[timestamp_name]])
+                                                        for i in local_dataframe[timestamp_name]])
     # set timestamp as frame index
     local_dataframe = local_dataframe.set_index(timestamp_name)
 
@@ -611,7 +608,7 @@ def _dataport_dataframe_to_hdf(dataport_dataframe,
     # Column names for dataframe
     column_names = [('power', 'active')]
     # convert from kW to W for realpower data
-    if(user_selected_table.find('_realpower_') > 0):
+    if (user_selected_table.find('_realpower_') > 0):
         feeds_dataframe = feeds_dataframe.mul(1000)
     # building metadata
     building_metadata = {}

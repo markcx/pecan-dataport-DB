@@ -1,7 +1,10 @@
 from __future__ import print_function, division
+
 from copy import deepcopy
-from .file_management import get_appliance_types_from_disk
+
 from six import iteritems
+
+from .file_management import get_appliance_types_from_disk
 
 
 def get_appliance_types():
@@ -33,7 +36,6 @@ def _concatenate_all_appliance_types(appliance_types_from_disk):
 
 def _concatenate_complete_appliance_type(
         appliance_type_name, appliance_types_from_disk):
-
     concatenated_app_type = _concatenate_complete_object(
         appliance_type_name, appliance_types_from_disk)
     categories = concatenated_app_type.setdefault('categories', {})
