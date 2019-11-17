@@ -419,9 +419,14 @@ def download_dataport(database_host,
     original_metadata_dir = os.path.join(m_util.get_module_directory(),
                                          'metadata_tmp')
     tmp_dir = tempfile.mkdtemp()
-    # metadata_dir = os.path.join(tmp_dir, 'metadata_tmp')
-    metadata_dir = os.path.join(os.getcwd(), 'metadata_info')
-    shutil.copytree(original_metadata_dir, metadata_dir)
+    metadata_dir = os.path.join(os.getcwd(), 'metaBuildingInfo')
+    if not os.path.exists(metadata_dir):
+        os.mkdir(metadata_dir)
+        print("Make a metaInfo dir for buildings!")
+
+    metadata_dir = os.path.join(metadata_dir, 'metainfo_%s' % user_selected_table)
+    if not os.path.exists(metadata_dir):
+        shutil.copytree(original_metadata_dir, metadata_dir)
     print("Using temporary dir for metadata:", metadata_dir)
 
     for f in os.listdir(metadata_dir):
