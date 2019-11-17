@@ -210,9 +210,9 @@ def database_assert(database_table):
             ), "Table not compatible with desired electricity shemas!"
 
 
-def view_database_tables(database_username, database_password, database_schema):
+def view_database_tables(database_host, database_username, database_password, database_schema):
 
-    database_host = 'dataport.pecanstreet.org'
+
     database_port = '5434'
     database_name = 'dataport'
 
@@ -239,10 +239,9 @@ def view_database_tables(database_username, database_password, database_schema):
     return df
 
 
-def view_buildings(database_username, database_password, database_schema, database_table):
+def view_buildings(database_host, database_username, database_password, database_schema, database_table):
 
     database_assert(database_table)
-    database_host = 'dataport.pecanstreet.org'
     database_port = '5434'
     database_name = 'dataport'
 
@@ -267,8 +266,73 @@ def view_buildings(database_username, database_password, database_schema, databa
     conn.close()
 
 
-def download_dataport(database_username,
-                      database_password, hdf_filename,
+def view_data_window(database_host,
+                     database_username,
+                     database_password,
+                     database_schema,
+                     database_table,
+                     building_no=None):
+    """
+
+    :param database_host:
+    :param database_username:
+    :param database_password:
+    :param database_schema:
+    :param database_table:
+    :param building_no:
+    :return:
+    """
+    database_assert(database_table)
+    database_port = '5434'
+    database_name = 'dataport'
+
+    # try to connect to database
+    try:
+        conn = db.connect('host=' + database_host +
+                          ' port=' + database_port +
+                          ' dbname=' + database_name +
+                          ' user=' + database_username +
+                          ' password=' + database_password)
+    except:
+        print('Could not connect to remote database')
+        raise
+
+    # select all buildings for the database_table
+    # sql_query = ('SELECT DISTINCT dataid' +
+    #              ' FROM other_datasets.metadata' +
+    #              ' ORDER BY dataid')
+
+    if(not (building_no)):
+        print(" Please provide the list of building numbers ")
+    else:
+        for each_building in building_no:
+            #seperate columns for 1s and 1min data
+            if(database_table.find('_1s') > 0):
+                sql_query = ('SELECT MIN(egauge_1s_min_time) AS minlocalminute,' +
+                         ' MAX(egauge_1s_max_time) AS maxlocalminute' +
+                         ' FROM other_datasets.metadata' +
+                         ' WHERE dataid=' + str(each_building))
+            else:
+                sql_query = ('SELECT MIN(egauge_1min_min_time) AS minlocalminute,' +
+                         ' MAX(egauge_1min_max_time) AS maxlocalminute' +
+                         ' FROM other_datasets.metadata' +
+                         ' WHERE dataid=' + str(each_building))
+
+            timestamps = pd.read_sql(sql_query, conn)
+            first_timestamp_in_table = timestamps['minlocalminute'][0]
+            last_timestamp_in_table = timestamps['maxlocalminute'][0]
+            print(str(each_building),
+                  "\t\t", first_timestamp_in_table,
+                  "\t\t", last_timestamp_in_table)
+        print("Done loading all the buildings!!")
+
+    conn.close()
+
+
+def download_dataport(database_host,
+                      database_username,
+                      database_password,
+                      hdf_filename,
                       database_schema='electricity',
                       user_selected_table='eg_realpower_1min',
                       periods_to_load=None):
@@ -279,6 +343,7 @@ def download_dataport(database_username,
     ----------
     hdf_filename : str
         Output HDF filename.  If file exists already then will be deleted.
+    database_host: endpoint of the database
     database_username, database_password, database_schema,user_selected_table, hdf_filename : str
     periods_to_load : dict of tuples, optional
        Key of dict is the building number (int).
@@ -289,7 +354,7 @@ def download_dataport(database_username,
 
     database_assert(user_selected_table)
     # dataport database settings
-    database_host = 'dataport.pecanstreet.org'
+
     database_port = '5434'
     database_name = 'dataport'
 

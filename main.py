@@ -20,5 +20,5 @@ def config(filename='pecan_database.ini', section='postgresql'):
 
 
 
-# config_dict = config()
-# print(metaInfo.view_database_tables(config_dict['user'], config_dict['password'], 'electricity'))
+config_dict = config()
+print(metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity'))
