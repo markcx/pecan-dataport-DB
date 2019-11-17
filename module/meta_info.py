@@ -314,15 +314,24 @@ def view_data_window(database_host,
         for each_building in building_no:
             #seperate columns for 1s and 1min data
             if(database_table.find('_1s') > 0):
+                # sql_query = ('SELECT MIN(egauge_1s_min_time) AS minlocalminute,' +
+                #          ' MAX(egauge_1s_max_time) AS maxlocalminute' +
+                #          ' FROM other_datasets.metadata' +
+                #          ' WHERE dataid=' + str(each_building))
+
                 sql_query = ('SELECT MIN(egauge_1s_min_time) AS minlocalminute,' +
                          ' MAX(egauge_1s_max_time) AS maxlocalminute' +
-                         ' FROM other_datasets.metadata' +
+                         ' FROM ' + database_schema +
                          ' WHERE dataid=' + str(each_building))
             else:
+                # sql_query = ('SELECT MIN(egauge_1min_min_time) AS minlocalminute,' +
+                #          ' MAX(egauge_1min_max_time) AS maxlocalminute' +
+                #          ' FROM other_datasets.metadata' +
+                #          ' WHERE dataid=' + str(each_building))
                 sql_query = ('SELECT MIN(egauge_1min_min_time) AS minlocalminute,' +
-                         ' MAX(egauge_1min_max_time) AS maxlocalminute' +
-                         ' FROM other_datasets.metadata' +
-                         ' WHERE dataid=' + str(each_building))
+                             ' MAX(egauge_1min_max_time) AS maxlocalminute' +
+                             ' FROM ' + database_schema +
+                             ' WHERE dataid=' + str(each_building))
 
             timestamps = pd.read_sql(sql_query, conn)
             first_timestamp_in_table = timestamps['minlocalminute'][0]

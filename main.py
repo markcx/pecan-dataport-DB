@@ -22,6 +22,6 @@ def config(filename='pecan_database.ini', section='postgresql'):
 
 config_dict = config()
 # metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity')
-metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity.eg_angle_15min', 'eg_angle_15min')
-
+buildingIDs = metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity.eg_angle_15min', 'eg_angle_15min')
+metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
 
