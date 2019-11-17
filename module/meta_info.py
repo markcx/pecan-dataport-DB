@@ -419,7 +419,8 @@ def download_dataport(database_host,
     original_metadata_dir = os.path.join(m_util.get_module_directory(),
                                          'metadata_tmp')
     tmp_dir = tempfile.mkdtemp()
-    metadata_dir = os.path.join(tmp_dir, 'metadata_tmp')
+    # metadata_dir = os.path.join(tmp_dir, 'metadata_tmp')
+    metadata_dir = os.path.join(os.getcwd(), 'metadata_info')
     shutil.copytree(original_metadata_dir, metadata_dir)
     print("Using temporary dir for metadata:", metadata_dir)
 
@@ -553,6 +554,8 @@ def download_dataport(database_host,
                         # nilmtk requires building indices to start at 1
                         nilmtk_building_id = buildings_to_load.index(building_id) + 1
                         # convert to nilmtk-df and save to disk
+                        # raise NotImplementedError(metadata_dir)
+                        # metadata_dir = os.path.join(os.getcwd(), 'metadata_tmp')
                         nilmtk_dataframe = _dataport_dataframe_to_hdf(
                             chunk_dataframe, store,
                             nilmtk_building_id,
@@ -586,7 +589,7 @@ def download_dataport(database_host,
     m_c_yaml2hdf5.convert_yaml_to_hdf5(metadata_dir, hdf_filename)
 
     # remote the temporary dir when finished
-    shutil.rmtree(tmp_dir)
+    # shutil.rmtree(tmp_dir)
 
 
 def _dataport_dataframe_to_hdf(dataport_dataframe,
@@ -668,8 +671,12 @@ def _dataport_dataframe_to_hdf(dataport_dataframe,
 
     # write building yaml to file
     building = 'building{:d}'.format(nilmtk_building_id)
+    # override the metadata dir path
+    # metadata_dir = os.path.join(os.getcwd(), 'metadata_tmp')
     yaml_full_filename = os.path.join(metadata_dir, building + '.yaml')
+    # raise NotImplementedError(yaml_full_filename)
     with open(yaml_full_filename, 'w') as outfile:
         outfile.write(yaml.dump(building_metadata))
+    # outfile.close()
 
     return 0
