@@ -13,6 +13,7 @@ import shutil
 import tempfile
 import re
 import yaml
+import numpy as np
 
 import module.util as m_util
 import module.convert_yaml_to_hdf5 as m_c_yaml2hdf5
@@ -257,13 +258,18 @@ def view_buildings(database_host, database_username, database_password, database
         raise
 
     # select all buildings for the database_table
+    # sql_query = ('SELECT DISTINCT dataid' +
+    #              ' FROM other_datasets.metadata' +
+    #              ' ORDER BY dataid')
+
     sql_query = ('SELECT DISTINCT dataid' +
-                 ' FROM other_datasets.metadata' +
+                 ' FROM ' + database_schema +
                  ' ORDER BY dataid')
 
     buildings_in_table = pd.read_sql(sql_query, conn)['dataid'].tolist()
-    print(buildings_in_table)
+    print(np.array(buildings_in_table))
     conn.close()
+    return buildings_in_table
 
 
 def view_data_window(database_host,
