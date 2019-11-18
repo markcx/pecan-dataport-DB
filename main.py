@@ -19,19 +19,36 @@ def config(filename='pecan_database.ini', section='postgresql'):
     return db
 
 
+def run():
+    config_dict = config()
+    tables = metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity')
 
-config_dict = config()
+    # metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
+    # table_name = 'eg_realpower_1hr'
+    for j in range(tables.size):
 
-tables = metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity')
-buildingIDs = metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity.eg_angle_15min', 'eg_angle_15min')
-# metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
-# table_name = 'eg_realpower_1hr'
-table_name = tables['electricity'][13]
-# for k in buildingIDs[:2]:
-metaInfo.download_dataport(config_dict['host'],
-                               config_dict['user'],
-                               config_dict['password'],
-                               'data/%s.h5' % (table_name),
-                               'electricity',
-                               table_name,
-                               periods_to_load={ k: ('2018-11-17', '2019-06-17') for k in buildingIDs[:2]})
+        # try:
+        table_name = tables['electricity'][j]
+        print('processing table {:d} : {}'.format(j, table_name))
+        if '_1s' in table_name:
+            print("skip {:d}".format(j))
+            continue
+        buildingIDs = metaInfo.view_buildings(config_dict['host'], config_dict['user'], config_dict['password'],
+                                              'electricity.' + table_name, table_name)
+
+        metaInfo.download_dataport(config_dict['host'],
+                                   config_dict['user'],
+                                   config_dict['password'],
+                                   'data/%s.h5' % (table_name),
+                                   'electricity',
+                                   table_name,
+                                   periods_to_load={ k: ('2012-01-01', '2019-11-17') for k in buildingIDs})
+    # except Exception:
+        #     print("Some error when parse {}!".format(j))
+
+        # except:
+        #     pass
+
+
+if __name__ == "__main__":
+    run()
