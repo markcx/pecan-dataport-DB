@@ -10,6 +10,7 @@ import re
 import shutil
 import sys
 import tempfile
+import pytz
 
 import numpy as np
 import pandas as pd
@@ -615,7 +616,15 @@ def _dataport_dataframe_to_hdf(dataport_dataframe,
     local_dataframe = local_dataframe.set_index(timestamp_name)
 
     # set timezone
-    local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous=True)
+    try:
+        local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous='infer', nonexistent='shift_forward')
+    except pytz.AmbiguousTimeError:
+        local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous=True, nonexistent='shift_backward')
+    except pytz.NonExistentTimeError:
+        local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous='infer', nonexistent='shift_forward')
+    except:
+        local_dataframe = local_dataframe.tz_localize('US/Central', ambiguous='infer', nonexistent='shift_backward')
+
     # remove timestamp column from dataframe
     feeds_dataframe = local_dataframe.drop('dataid', axis=1)
     # Column names for dataframe

@@ -19,13 +19,20 @@ def config(filename='pecan_database.ini', section='postgresql'):
     return db
 
 
-def run():
+def run(table_id=0):
     config_dict = config()
     tables = metaInfo.view_database_tables(config_dict['host'], config_dict['user'], config_dict['password'], 'electricity')
 
     # metaInfo.view_data_window(config_dict['host'], config_dict['user'], config_dict['password'], 'other_datasets.metadata', 'eg_realpower_1min', buildingIDs[0:20])
     # table_name = 'eg_realpower_1hr'
-    for j in range(tables.size):
+
+    table_id_low = table_id_up = table_id
+
+    if table_id == -1:
+        table_id_low = 0
+        table_id_up = tables.size
+
+    for j in range(table_id_low, table_id_up + 1): # tables.size
 
         # try:
         table_name = tables['electricity'][j]
@@ -51,4 +58,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    run(table_id=0)
