@@ -117,6 +117,7 @@ feed_mapping = {
     'bedroom5': {'type': 'sockets', 'room': 'bedroom'},
     'battery1': {},  # new field, need mapping
     'car1': {'type': 'electric vehicle'},
+    'car2': {'type': 'electric vehicle'}, # new field
     'circpump1': {},  # new field, need mapping
     'clotheswasher1': {'type': 'washing machine'},
     'clotheswasher_dryg1': {'type': 'washer dryer'},
