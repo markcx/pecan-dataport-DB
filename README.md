@@ -5,11 +5,11 @@
 ### Pecan street dataport database project 
 This repo builds up a python package to pull up and backup postgres Database content. It mainly works on energy related data. 
 
-When running the following line: 
+When you run the following line: 
 ```bash
 python main.py
 ```
-The expected result is 
+, the expected result is 
 
 ```python
 electricity
@@ -103,7 +103,7 @@ when call metaInfo view window it queries the other_datasets.metadata
 Done loading all the buildings!!
 ```
 
-When run the main file with demo setting, here is the example outcome:
+When you run the main file with the demo setting, here is the example outcome:
 ```python
 Loading building 26 @ 2019-11-17 13:53:07.803936
   Loading table eg_realpower_1hr
