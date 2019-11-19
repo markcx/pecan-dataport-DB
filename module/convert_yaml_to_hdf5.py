@@ -89,7 +89,9 @@ feed_mapping = {
     'wellpump1': {},  # new field, need mapping
     'winecooler1': {'type': 'appliance'},
     'leg1v': {},
-    'leg2v': {}
+    'leg2v': {},
+    'grid_l1': { 'type': 'grid l1'},  # new field
+    'grid_l2': { 'type': 'grid l2'}  # new field
 }
 
 feed_ignore = ['solar', 'solar2', 'grid', 'leg1v', 'leg2v', 'battery1', 'circpump1',
